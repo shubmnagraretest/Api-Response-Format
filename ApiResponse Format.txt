@@ -1,0 +1,142 @@
+
+public class ApiResponse {
+	// fields to access data of any api for this project
+	public static final String STATUS = "status";
+	public static final String STATUS_CODE = "status_code";
+	public static final String DATA = "data";
+	public static final String MESSAGE = "message";
+
+	// status code
+	public static final String ERROR_STATUS = "ERROR";
+	public static final String WARN_STATUS = "WARNING";
+	public static final String SUCCESS_STATUS = "SUCCESS";
+
+	private JsonNode data;
+	private String message;
+	private String status;
+	private int statusCode = HttpURLConnection.HTTP_OK;
+
+	// Initial response
+	public ApiResponse() {
+		this.status = ERROR_STATUS;
+		this.message = "Failed";
+		this.data = null;
+	}
+
+	public ApiResponse(String status, String message) {
+		this.status = status;
+		this.message = message;
+	}
+
+	public JsonNode getData() {
+		return this.data;
+	}
+
+	public String getMessage() {
+		return this.message;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public JsonNode getResponse() {
+		JsonNode response = new ObjectMapper().createObjectNode();
+		((ObjectNode) response).put(STATUS, this.getStatus());
+		((ObjectNode) response).put(MESSAGE, this.getMessage());
+		((ObjectNode) response).put(STATUS_CODE, this.getStatusCode());
+		((ObjectNode) response).set(DATA, this.getData());
+		return response;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setData(JsonNode data) {
+		this.data = data;
+	}
+
+	public void setAsError() {
+		this.status = ERROR_STATUS;
+	}
+
+	public void setAsError(String message) {
+		this.status = ERROR_STATUS;
+		this.message = message;
+	}
+
+	public void setAsWarning() {
+		this.status = WARN_STATUS;
+	}
+
+	public void setAsWarning(String message) {
+		this.status = WARN_STATUS;
+		this.message = message;
+	}
+
+	public void setAsSuccess() {
+		this.status = SUCCESS_STATUS;
+	}
+
+	public void setAsSuccess(String message) {
+		this.status = SUCCESS_STATUS;
+		this.message = message;
+	}
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(int status_code) {
+		this.statusCode = status_code;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class ApiResponse extends com.csl.los_external_sources.ApiResponse {
+
+  private HttpStatus httpStatus;
+
+  public ApiResponse() {
+    super();
+    this.setHttpStatus(HttpStatus.NOT_FOUND);
+  }
+
+  public ResponseEntity<JsonNode> getResponseEntity() {
+    ResponseEntity<JsonNode> responseEntity =
+        new ResponseEntity<JsonNode>(this.getResponse(), this.getHttpStatus());
+    return responseEntity;
+  }
+
+
+  public HttpStatus getHttpStatus() {
+    return httpStatus;
+  }
+
+  public void setHttpStatus(HttpStatus httpStatus) {
+    this.setStatusCode(httpStatus.value());
+    this.httpStatus = httpStatus;
+  }
+
+  public void setHttpStatus(HttpStatus httpStatus, String apiStatus, String message) {
+    setHttpStatus(httpStatus);
+    setStatus(apiStatus);
+    setMessage(message);
+  }
